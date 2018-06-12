@@ -6,4 +6,11 @@
     <string name="wifi_network">WIFI网络已连接</string>
     <string name="eth_network">有线网络已连接</string>
     <string name="disnetwork">您的网络出了一点小故障</string>
+    <string name="live_none">没有此频道</string>
+    <string name="play_error">播放异常</string>
+    <string name="bottom_control">键控制</string>
+    <string name="bottom_choose">键选择</string>
+    <string name="bottom_ok">键确定</string>
+    <string name="bottom_back">键返回</string>
+
 </resources>

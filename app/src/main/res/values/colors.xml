@@ -5,4 +5,6 @@
     <color name="black">#000000</color>
     <color name="dark">#A9A9A9</color>
 
+    <color name="livetype_name">#333333</color>
+    <color name="livetype_selector">#999999</color>
 </resources>

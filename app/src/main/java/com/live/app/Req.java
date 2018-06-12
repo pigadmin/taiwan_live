@@ -13,6 +13,7 @@ import okhttp3.Response;
 
 public class Req {
     public static String type = App.headurl + "type?mac=" + App.mac;
+    public static String live = App.headurl;
 
     public static void get(final String url) {
         System.out.println(url);

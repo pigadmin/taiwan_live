@@ -62,12 +62,21 @@ public class LiveTypeAdapter extends BaseAdapter {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-        holder.livetype_name.setText(list.get(position).getName());
+        holder.livetype_name.setText(addo(position) + list.get(position).getName());
 
         Picasso.with(context).load(list.get(position).getIcon()).into(holder.livetype_icon);
 
         return convertView;
 
+    }
+
+    private String addo(int position) {
+        if (position <= 9) {
+            return "00" + (position + 1) + " ";
+        } else if (position <= 99) {
+            return "0" + (position + 1) + " ";
+        }
+        return (position + 1) + " ";
     }
 
 
