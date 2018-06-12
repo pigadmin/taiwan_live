@@ -1,6 +1,6 @@
 获取直播类型
 ------------------------------------
-localhost:8080/ktv/api/live/type?mac=3
+http://192.168.2.25:8109/ktv/api/live/type?mac=3
 
 {
     "code": 0,
@@ -25,7 +25,7 @@ localhost:8080/ktv/api/live/type?mac=3
 参数：
      api/live/{type}   直播分类id
 
-localhost:8080/ktv/api/live/2?mac=3
+http://192.168.2.25:8109/ktv/api/live/2?mac=3
 
 {
     "code": 0,

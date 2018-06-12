@@ -5,6 +5,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.live.R;
+import com.live.app.Req;
+import com.live.event.DataMessage;
+import com.live.event.ErrorMessage;
 
 public class WelcomeActivity extends BaseActivity {
 
@@ -24,4 +27,7 @@ public class WelcomeActivity extends BaseActivity {
 
     }
 
+    public void onEvent(ErrorMessage event) {
+
+    }
 }

@@ -97,8 +97,8 @@ public class App extends Application {
     };
 
     private boolean fstart;
-    private static String ip = "192.168.2.25:8108";
-//private static String ip = "192.168.2.89:8108";
+    private static String ip = "192.168.2.25:8109";
+    //private static String ip = "192.168.2.89:8108";
     public static String version;
 
     private void config() {
@@ -124,7 +124,7 @@ public class App extends Application {
     private void getip() {
         String tmp = config.getString("ip", "");
         if (!tmp.equals("")) {
-            headurl = "http://" + tmp + "/wisdom_spa/remote/";
+            headurl = "http://" + tmp + "/ktv/api/live/";
             System.out.println("---headurl---\n" + headurl);
         }
     }
@@ -201,6 +201,7 @@ public class App extends Application {
         }
         return false;
     }
+
     private String Key = "";
 
     public String getKey() {

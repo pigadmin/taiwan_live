@@ -51,21 +51,12 @@ public class MyService extends Service implements IScrollState, Runnable {
     Timer marquee = new Timer();
 
     private void getmarquee() {
-        marquee.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Req.get(Req.marquee);
-            }
-        }, 0, 60 * 1000);
     }
 
     boolean runmarquee = false;
 
     public void onEvent(DataMessage event) {
         try {
-            if (event.getApi().equals(Req.marquee)) {
-
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
