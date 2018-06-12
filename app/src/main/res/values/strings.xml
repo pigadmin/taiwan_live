@@ -1,3 +1,9 @@
 <resources>
-    <string name="app_name">Live</string>
+    <string name="app_name">TV</string>
+
+    <string name="na">直播列表</string>
+    <string name="gps_network">移动网络已连接</string>
+    <string name="wifi_network">WIFI网络已连接</string>
+    <string name="eth_network">有线网络已连接</string>
+    <string name="disnetwork">您的网络出了一点小故障</string>
 </resources>

@@ -1,0 +1,45 @@
+获取直播类型
+------------------------------------
+localhost:8080/ktv/api/live/type?mac=3
+
+{
+    "code": 0,
+    "data": [
+        {
+            "id": 3,
+            "icon": "http://192.168.2.11:8088/icon/1528716384964.jpg",
+            "name": "地方直播"
+        },
+        {
+            "id": 1,
+            "icon": "http://192.168.2.11:8088/icon/1528716358410.jpg",
+            "name": "卫视直播"
+        }
+    ]
+}
+
+
+获取直播列表
+------------------------------------
+
+参数：
+     api/live/{type}   直播分类id
+
+localhost:8080/ktv/api/live/2?mac=3
+
+{
+    "code": 0,
+    "data": [
+        {
+            "id": 3,
+            "name": "北京电视台",
+            "address": "11111",   //地址
+            "status": 1,
+            "position": 1,  //序号
+            "icon": "http://192.168.2.11:8088/upload/jpg/1523166549378.jpg",
+            "typeId": 2,
+            "goal": null,
+            "type": null
+        }
+    ]
+}
