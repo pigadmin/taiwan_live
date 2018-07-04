@@ -16,6 +16,7 @@
         android:id="@+id/livetype_name"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:ellipsize="marquee"
         android:gravity="center"
         android:marqueeRepeatLimit="marquee_forever"

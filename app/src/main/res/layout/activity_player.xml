@@ -8,133 +8,150 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"></VideoView>
 
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/live_tips"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_width="710dp"
+        android:layout_height="130dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:layout_marginBottom="60dp"
+        android:background="@mipmap/bottom"
+        android:orientation="horizontal"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
+        android:visibility="gone">
 
-        <LinearLayout
+
+        <TextView
+            android:id="@+id/live_no_s"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
-            android:layout_marginBottom="60dp"
-            android:background="@mipmap/bottom"
+            android:layout_gravity="center_vertical"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="001"
+            android:textColor="@color/white"
+            android:textSize="80sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="44dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
-            <LinearLayout
+
+            <TextView
+                android:id="@+id/live_no_name"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:singleLine="true"
+                android:text="CCTV-6"
+                android:textColor="@color/white"
+                android:textSize="26sp" />
 
-                <TextView
-                    android:id="@+id/live_no_s"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="05"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="0.01dp"
+                android:background="@color/white"></ImageView>
 
-                <TextView
-                    android:id="@+id/live_no_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="18dp"
-                    android:gravity="center"
-                    android:singleLine="true"
-                    android:text="CCTV-6"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:gravity="center_vertical"
                 android:orientation="horizontal">
-
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:background="@mipmap/icon_xz" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="18dp"
-                    android:singleLine="true"
-                    android:text="@string/bottom_control"
-                    android:textColor="@color/white"
-                    android:textSize="24sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:gravity="right|center_vertical">
-
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:background="@mipmap/icon_xz" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="2dp"
+                        android:singleLine="true"
+                        android:text="@string/bottom_control"
+                        android:textColor="@color/white"
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="110dp"
                         android:background="@mipmap/icon_ok" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="14dp"
+                        android:layout_marginLeft="2dp"
                         android:singleLine="true"
                         android:text="@string/bottom_ok"
                         android:textColor="@color/white"
-                        android:textSize="24sp" />
+                        android:textSize="18sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
 
                     <ImageView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="20dp"
+                        android:layout_marginLeft="110dp"
                         android:background="@mipmap/icon_fh" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginRight="15dp"
+                        android:layout_marginLeft="2dp"
                         android:singleLine="true"
                         android:text="@string/bottom_back"
                         android:textColor="@color/white"
-                        android:textSize="24sp" />
+                        android:textSize="18sp" />
                 </LinearLayout>
-
             </LinearLayout>
+
         </LinearLayout>
+    </LinearLayout>
 
-        <TextView
-            android:id="@+id/live_no_b"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_margin="44dp"
-            android:background="@mipmap/live_no_bg"
-            android:gravity="center"
-            android:maxEms="4"
-            android:paddingBottom="10dp"
-            android:paddingLeft="17dp"
-            android:paddingRight="17dp"
-            android:paddingTop="10dp"
-            android:singleLine="true"
-            android:text="05"
-            android:textColor="@color/white"
-            android:textSize="45sp" />
+    <TextView
+        android:id="@+id/live_no_b"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_margin="44dp"
+        android:background="@mipmap/live_no_bg"
+        android:gravity="center"
+        android:maxEms="4"
+        android:paddingBottom="10dp"
+        android:paddingLeft="17dp"
+        android:paddingRight="17dp"
+        android:paddingTop="10dp"
+        android:singleLine="true"
+        android:textColor="@color/white"
+        android:textSize="45sp" />
 
-    </RelativeLayout>
 
 </RelativeLayout>

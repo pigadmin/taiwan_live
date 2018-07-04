@@ -13,11 +13,12 @@
 
         <ListView
             android:id="@+id/live_list"
-            android:layout_width="match_parent"
+            android:layout_width="280dp"
             android:layout_height="match_parent"
             android:divider="@color/transparent"
             android:focusable="false"
             android:listSelector="@mipmap/selected"
+            android:paddingTop="60dp"
             android:scrollbars="none"></ListView>
     </LinearLayout>
 

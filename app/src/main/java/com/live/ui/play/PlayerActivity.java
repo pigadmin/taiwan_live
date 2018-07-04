@@ -13,6 +13,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
@@ -47,10 +48,10 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
     }
 
 
-    RelativeLayout live_tips;
-    TextView live_no_s, live_no_name;
-    TextView live_no_b;
-    VideoView live_player;
+    private LinearLayout live_tips;
+    private TextView live_no_s, live_no_name;
+    private TextView live_no_b;
+    private VideoView live_player;
 
     private void find() {
         live_tips = findViewById(R.id.live_tips);
@@ -93,7 +94,7 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
                     }.getType());
             livelist = data.getData();
 
-            if (livelist.isEmpty()) {
+            if (!livelist.isEmpty()) {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
@@ -297,10 +298,10 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
             @Override
             public void run() {
                 live_tips.setVisibility(View.VISIBLE);
-                live_no_s.setText(currentno + 1 + "");
+                live_no_s.setText(liveno(currentno) + "");
                 live_no_name.setText(livelist.get(currentno).getName());
 
-                live_no_b.setText(currentno + 1 + "");
+                live_no_b.setText(liveno(currentno) + "");
                 handler.removeMessages(HideLiveInfo);
                 handler.sendEmptyMessageDelayed(HideLiveInfo, 5 * 1000);
             }
@@ -371,15 +372,21 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        System.out.println(event.getAction());
 
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             try {
+
                 if (popupWindow != null) {
+
+                    System.out.println(popupWindow.isShowing());
+
                     if (popupWindow.isShowing()) {
                         handler.removeMessages(HideLiveList);
                         handler.sendEmptyMessageDelayed(HideLiveList, 10 * 1000);
+                    } else {
+                        show();
                     }
+
                 } else {
                     show();
                 }
@@ -391,4 +398,14 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
         }
         return super.onTouchEvent(event);
     }
+
+    private String liveno(int position) {
+        if (position < 10) {
+            return "00" + (position + 1);
+        } else if (position < 100) {
+            return "0" + (position + 1);
+        }
+        return (position + 1) + "";
+    }
+
 }

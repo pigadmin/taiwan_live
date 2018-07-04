@@ -26,7 +26,8 @@
         android:layout_weight="1"
         android:horizontalSpacing="64dp"
         android:numColumns="5"
-        android:scrollbars="none"></GridView>
+        android:scrollbars="none"
+        android:verticalSpacing="30dp"></GridView>
 
 
     <RelativeLayout
