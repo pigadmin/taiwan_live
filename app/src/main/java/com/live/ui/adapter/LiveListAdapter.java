@@ -28,7 +28,12 @@ public class LiveListAdapter extends BaseAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return list.size();
+        try {
+            return list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 
     @Override
@@ -70,9 +75,9 @@ public class LiveListAdapter extends BaseAdapter {
     }
 
     private String liveno(int position) {
-        if (position < 10) {
+        if (position < 9) {
             return "00" + (position + 1);
-        } else if (position < 100) {
+        } else if (position < 99) {
             return "0" + (position + 1);
         }
         return (position + 1) + "";

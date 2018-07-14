@@ -11,12 +11,15 @@ import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.live.R;
+import com.live.bean.AdList;
 import com.live.event.NetChange;
 import com.live.event.UpdateTime;
+import com.live.service.MyService;
 import com.live.tools.Toas;
 
 import java.io.BufferedReader;
@@ -28,6 +31,10 @@ import de.greenrobot.event.EventBus;
 import okhttp3.OkHttpClient;
 
 public class App extends Application {
+    public static final String InitAdList = "InitAdList";
+    public static final String UpdateAdList = "UpdateAdList";
+    public static final String DeleteAdList = "DeleteAdList";
+
     public static Gson gson;
     private SharedPreferences config;
     public static OkHttpClient client;
@@ -54,7 +61,7 @@ public class App extends Application {
         registerReceiver(receiver, filter);
 
 
-//        startService(new Intent(this, MyService.class));
+        startService(new Intent(this, MyService.class));
 
     }
 
@@ -97,8 +104,11 @@ public class App extends Application {
     };
 
     private boolean fstart;
-    private static String ip = "192.168.2.25:8109";
-    //private static String ip = "192.168.2.89:8108";
+    //        private static String ip = "192.168.2.9";
+    private static String ip = "192.168.2.25";
+//    private static String ip = "192.168.2.180";
+
+    //    private static String ip = "192.168.2.12";
     public static String version;
 
     private void config() {
@@ -107,9 +117,9 @@ public class App extends Application {
             if (!fstart) {
                 SharedPreferences.Editor editor = config.edit();
                 editor.putBoolean("fstart", true);
-                System.out.println("---fstart---");
+                Log.d("app", "fstart");
                 editor.putString("ip", ip);
-                System.out.println("---ip---\n" + ip);
+                Log.d("ip", "---ip---\n" + ip);
                 editor.commit();
             }
             version = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
@@ -119,13 +129,18 @@ public class App extends Application {
         }
     }
 
+
     public static String headurl;
+    public static String socketurl;
 
     private void getip() {
         String tmp = config.getString("ip", "");
         if (!tmp.equals("")) {
-            headurl = "http://" + tmp + "/ktv/api/live/";
-            System.out.println("---headurl---\n" + headurl);
+            headurl = "http://" + tmp + ":8109/ktv/api/";
+//            headurl = "http://" + tmp + ":8080/ktv/api/";
+            Log.d("host", "---headurl---\n" + headurl);
+            socketurl = "http://" + tmp + ":8000/tv";
+            Log.d("host", "---headurl---\n" + socketurl);
         }
     }
 
@@ -142,6 +157,7 @@ public class App extends Application {
             while ((line = bReader.readLine()) != null) {
                 mac = line.trim();
             }
+//            mac = "1";
             System.out.println("---mac---\n" + mac);
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,4 +227,16 @@ public class App extends Application {
     public void setKey(String key) {
         Key = key;
     }
+
+    private AdList adLists;
+
+    public AdList getAdLists() {
+        return adLists;
+    }
+
+    public void setAdLists(AdList adLists) {
+        this.adLists = adLists;
+    }
+
+
 }

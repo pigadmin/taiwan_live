@@ -8,11 +8,9 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,16 +21,18 @@ import com.live.R;
 import com.live.app.App;
 import com.live.app.Req;
 import com.live.bean.AJson;
+import com.live.bean.ErrorMsg;
 import com.live.bean.WelcomeAd;
-import com.live.event.DataMessage;
-import com.live.event.ErrorMessage;
+import com.live.tools.AlertDialogHelper;
+import com.live.tools.BtmDialog;
 import com.live.tools.FULL;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnErrorListener,
+        MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, Req.Api {
     String TAG = "WelcomeActivity";
 
     @Override
@@ -44,14 +44,23 @@ public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnError
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(netreceiver, intentFilter);
+
+        req = new Req(this);
     }
+
+    private Req req;
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
+        try {
+            if (mediaPlayer != null) {
+                mediaPlayer.stop();
+                mediaPlayer.release();
+                mediaPlayer = null;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         unregisterReceiver(netreceiver);
     }
@@ -109,11 +118,11 @@ public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnError
         });
     }
 
-    private String url;
+    private String openad;
 
     private void init() {
-        url = App.headurl + "open/ad?mac=" + App.mac + "&STBtype=1";
-        Req.get(url);
+        openad = App.headurl + "open/ad?mac=" + App.mac + "&STBtype=1";
+        req.Get(openad, openad);
     }
 
     private void toClass() {
@@ -130,9 +139,9 @@ public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnError
             switch (msg.what) {
                 case 0:
                     if (playtime > 0) {
-                        if (!ad_tips.isShown()) {
-                            ad_tips.setVisibility(View.VISIBLE);
-                        }
+//                        if (!ad_tips.isShown()) {
+//                            ad_tips.setVisibility(View.VISIBLE);
+//                        }
                         ad_time.setText(playtime + "");
                         playtime--;
                         handler.sendEmptyMessageDelayed(0, 1 * 1000);
@@ -182,46 +191,51 @@ public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnError
     private int playtime;
     private List<WelcomeAd> welcomeAds = new ArrayList<WelcomeAd>();
 
-    public void onEvent(DataMessage event) {
-        if (event.getApi().equals(url)) {
-            try {
-                AJson<List<WelcomeAd>> data = App.gson.fromJson(
-                        event.getData(), new TypeToken<AJson<List<WelcomeAd>>>() {
-                        }.getType());
-                welcomeAds = data.getData();
-                if (!welcomeAds.isEmpty()) {
-                    for (WelcomeAd ad : data.getData()) {
-                        playtime += ad.getPlayTime();
-                    }
-                    handler.sendEmptyMessage(0);
-                    handler.sendEmptyMessage(1);
-                } else {
-                    toClass();
-                }
-            } catch (Exception e) {
-                toClass();
-                e.printStackTrace();
-            }
 
+    private void showtip(String msg) {
+        try {
+            final BtmDialog dialog = new BtmDialog(WelcomeActivity.this, "溫馨提醒", msg);
+            AlertDialogHelper.BtmDialogDerive1(dialog, false, true, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    init();
+                    dialog.dismiss();
+                }
+            }, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
+
 
     private boolean isto;
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN && keyCode != KeyEvent.KEYCODE_VOLUME_UP && keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
-            if (!isto) {
-                isto = !isto;
-                handler.removeMessages(0);
-                handler.removeMessages(1);
-                toClass();
-            }
-        }
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (keyCode != KeyEvent.KEYCODE_VOLUME_DOWN && keyCode != KeyEvent.KEYCODE_VOLUME_UP && keyCode != KeyEvent.KEYCODE_VOLUME_MUTE) {
+//            if (!isto) {
+//                isto = !isto;
+//                handler.removeMessages(0);
+//                handler.removeMessages(1);
+//                toClass();
+//            }
+//        }
+//
+//        return super.onKeyDown(keyCode, event);
+//    }
 
-        return super.onKeyDown(keyCode, event);
-    }
-
+//    @Override
+//    public boolean onTouchEvent(MotionEvent event) {
+//        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+//            if (!isto) {
+//                isto = !isto;
+//                handler.removeMessages(0);
+//                handler.removeMessages(1);
+//                toClass();
+//            }
+//        }
+//        return super.onTouchEvent(event);
+//    }
 
     @Override
     public void onCompletion(MediaPlayer mp) {
@@ -258,6 +272,53 @@ public class WelcomeActivity extends BaseActivity implements MediaPlayer.OnError
     @Override
     public void onPrepared(MediaPlayer mp) {
         mp.start();
+    }
 
+
+    @Override
+    public void finish(String tag, String json) {
+        if (tag.equals(openad)) {
+            try {
+                AJson<List<WelcomeAd>> data = App.gson.fromJson(
+                        json, new TypeToken<AJson<List<WelcomeAd>>>() {
+                        }.getType());
+                welcomeAds = data.getData();
+                if (!welcomeAds.isEmpty()) {
+                    for (WelcomeAd ad : data.getData()) {
+                        playtime += ad.getPlayTime();
+                    }
+                    handler.sendEmptyMessage(0);
+                    handler.sendEmptyMessage(1);
+                } else {
+                    toClass();
+                }
+            } catch (Exception e) {
+//                toClass();
+//                e.printStackTrace();
+                if (tag.equals(openad)) {
+                    final ErrorMsg error = App.gson.fromJson(
+                            json, ErrorMsg.class);
+                    handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            System.out.println(error.getMsg());
+                            showtip(error.getMsg() + "\nmac：" + App.mac);
+                        }
+                    });
+
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void error(String tag, String json) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                showtip("服務器維護中");
+            }
+        });
     }
 }

@@ -4,42 +4,79 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.live.event.BitmapMessage;
-import com.live.event.DataMessage;
-import com.live.event.ErrorMessage;
 
 import de.greenrobot.event.EventBus;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class Req {
-    public static String type = App.headurl + "type?mac=" + App.mac;
-    public static String live = App.headurl;
+    private Api api;
 
-    public static void get(final String url) {
+    public Req(Api api) {
+        this.api = api;
+    }
+
+    public interface Api {
+        void finish(String tag, String json);
+
+        void error(String tag, String json);
+    }
+
+    public void Get(final String tag, final String url) {
         System.out.println(url);
         new Thread(new Runnable() {
             @Override
             public void run() {
+                String json = null;
+                Request request = null;
+                Response response = null;
                 try {
-                    String json;
-                    Request request = new Request.Builder().url(url).build();
-                    Response response = App.client.newCall(request).execute();
+                    request = new Request.Builder().url(url).build();
+                    response = App.client.newCall(request).execute();
                     if (response.code() == 200) {
                         json = response.body().string();
-                        System.out.println(json);
-                        EventBus.getDefault().post(new DataMessage(url, json));
+                        if (api == null)
+                            return;
+                        api.finish(tag, json);
                     } else {
-                        EventBus.getDefault().post(new ErrorMessage(url, response.code()));
+                        if (api == null)
+                            return;
+                        api.error(tag, response.code() + "");
                     }
                 } catch (Exception e) {
-                    System.out.println("api request fail:" + url);
-                    EventBus.getDefault().post(new ErrorMessage(url, 0));
-
+                    if (api == null)
+                        return;
+                    api.error(tag, response.code() + "");
                     // e.printStackTrace();
                 }
             }
         }).start();
     }
+
+//    public static void get(final String url) {
+//        System.out.println(url);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//                    String json = "";
+//                    Request request = new Request.Builder().url(url).build();
+//                    Response response = App.client.newCall(request).execute();
+//                    if (response.code() == 200) {
+//                        json = response.body().string();
+//                        System.out.println(json);
+//                        EventBus.getDefault().post(new DataMessage(url, json));
+//                    } else {
+//                        EventBus.getDefault().post(new ErrorMessage(url, json));
+//                    }
+//                } catch (Exception e) {
+//                    System.out.println("api request fail:" + url);
+//                    EventBus.getDefault().post(new ErrorMessage(url, ""));
+//                    // e.printStackTrace();
+//                }
+//            }
+//        }).start();
+//    }
 
 
     public static void img(final String api, final String url) {
@@ -54,11 +91,11 @@ public class Req {
                         Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
                         EventBus.getDefault().post(new BitmapMessage(api, bitmap));
                     } else {
-                        EventBus.getDefault().post(new ErrorMessage(api, response.code()));
+//                        EventBus.getDefault().post(new ErrorMessage(api, ""));
                     }
                 } catch (Exception e) {
                     System.out.println("api request fail:" + url);
-                    EventBus.getDefault().post(new ErrorMessage(api, 0));
+//                    EventBus.getDefault().post(new ErrorMessage(api, ""));
 //                    e.printStackTrace();
                 }
             }

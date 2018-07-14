@@ -1,21 +1,31 @@
-package com.live.event;
-
-public class ErrorMessage {
-
-
-    public ErrorMessage(String api, int code) {
-        this.api = api;
-        this.code = code;
-    }
-    private int code;
-
-    public int getCode() {
-        return code;
-    }
-
-    private String api;
-
-    public String getApi() {
-        return api;
-    }
-}
+//package com.live.event;
+//
+//public class ErrorMessage {
+//
+//
+//    public ErrorMessage(String api, String json) {
+//        this.api = api;
+//        this.json = json;
+//    }
+//
+//    private String api;
+//
+//    public String getApi() {
+//        return api;
+//    }
+//
+//    public void setApi(String api) {
+//        this.api = api;
+//    }
+//
+//    public String getJson() {
+//        return json;
+//    }
+//
+//    public void setJson(String json) {
+//        this.json = json;
+//    }
+//
+//    private String json;
+//
+//}

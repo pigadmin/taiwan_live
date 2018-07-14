@@ -1,22 +1,28 @@
 package com.live.ui.play;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -25,28 +31,184 @@ import com.live.R;
 import com.live.app.App;
 import com.live.app.Req;
 import com.live.bean.AJson;
+import com.live.bean.AdEntities;
+import com.live.bean.AdList;
 import com.live.bean.Live;
 import com.live.bean.LiveType;
-import com.live.event.DataMessage;
+import com.live.tools.AlertDialogHelper;
+import com.live.tools.BtmDialog;
 import com.live.tools.FULL;
+import com.live.tools.LtoDate;
 import com.live.tools.Toas;
 import com.live.ui.BaseActivity;
 import com.live.ui.adapter.LiveListAdapter;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener {
+public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorListener, MediaPlayer.OnPreparedListener, MediaPlayer.OnCompletionListener, Req.Api {
+    String tag = "PlayerActivity";
 
+    App app;
+    Req req;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_player);
+        app = (App) getApplication();
+        req = new Req(this);
         find();
         init();
+        regad();
+        checkad();
     }
 
+    private void checkad() {
+        try {
+            adLists = app.getAdLists();
+            adEntities = adLists.getAdEntities();
+            if (adLists == null)
+                return;
+            if (adEntities.isEmpty())
+                return;
+
+            adhandler.sendEmptyMessage(0);
+            Log.d(tag, "广告结束时间" + LtoDate.yMdHmsE(adLists.getEndtime() - System.currentTimeMillis()));
+
+            adhandler.sendEmptyMessageDelayed(1, adLists.getEndtime() - System.currentTimeMillis());
+        } catch (Exception e) {
+        }
+
+    }
+
+    private void regad() {
+
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(App.InitAdList);
+        intentFilter.addAction(App.UpdateAdList);
+        intentFilter.addAction(App.DeleteAdList);
+        registerReceiver(receiver, intentFilter);
+
+        ad_alpha = AnimationUtils.loadAnimation(this, R.anim.ad_alpha);
+        ad_rotate = AnimationUtils.loadAnimation(this, R.anim.ad_rotate);
+        ad_scale = AnimationUtils.loadAnimation(this, R.anim.ad_scale);
+        ad_translate = AnimationUtils.loadAnimation(this, R.anim.ad_translate);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(receiver);
+    }
+
+    private Animation ad_alpha;
+    private Animation ad_rotate;
+    private Animation ad_scale;
+    private Animation ad_translate;
+    private AdList adLists = new AdList();
+
+
+    private List<AdEntities> adEntities = new ArrayList<>();
+    private int currentad = 0;
+    private Handler adhandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case 0:
+                    hidead();
+                    if (currentad < adEntities.size()) {
+                        switch (adEntities.get(currentad).getAppearWay()) {
+                            case 1:
+                                startAnim(ad_alpha);
+                                break;
+                            case 2:
+                                startAnim(ad_translate);
+                                break;
+                            case 3:
+                                startAnim(ad_scale);
+                                break;
+                            case 4:
+                                startAnim(ad_rotate);
+                                break;
+                        }
+                        adhandler.sendEmptyMessageDelayed(0, adEntities.get(currentad).getPlaytime() * 1000);
+                        currentad++;
+                    } else {
+                        currentad = 0;
+                        adhandler.sendEmptyMessage(0);
+                    }
+                    break;
+                case 1:
+                    Log.d(tag, "广告结束");
+                    adhandler.removeMessages(0);
+                    hidead();
+                    break;
+            }
+        }
+    };
+
+    private void startAnim(Animation animation) {
+        try {
+            String weizhi = adLists.getPosition();
+            if (weizhi.contains("2")) {
+                ad_top.startAnimation(animation);
+                Picasso.with(PlayerActivity.this).load(adEntities.get(currentad).getNgPath()).into(ad_top);
+            }
+            if (weizhi.contains("3")) {
+                ad_bottom.startAnimation(animation);
+                Picasso.with(PlayerActivity.this).load(adEntities.get(currentad).getNgPath()).into(ad_bottom);
+            }
+            if (weizhi.contains("4")) {
+                ad_left.startAnimation(animation);
+                Picasso.with(PlayerActivity.this).load(adEntities.get(currentad).getNgPath()).into(ad_left);
+            }
+            if (weizhi.contains("5")) {
+                ad_right.startAnimation(animation);
+                Picasso.with(PlayerActivity.this).load(adEntities.get(currentad).getNgPath()).into(ad_right);
+            }
+
+
+        } catch (Exception e) {
+        }
+
+
+    }
+
+
+    private void hidead() {
+        try {
+            ad_left.setImageResource(R.color.transparent);
+            ad_right.setImageResource(R.color.transparent);
+            ad_top.setImageResource(R.color.transparent);
+            ad_bottom.setImageResource(R.color.transparent);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(App.InitAdList) || intent.getAction().equals(App.UpdateAdList)) {
+                adLists = (AdList) intent.getSerializableExtra("key");
+                adEntities = adLists.getAdEntities();
+                currentad = 0;
+
+                adhandler.removeMessages(0);
+                adhandler.sendEmptyMessage(0);
+
+                adhandler.removeMessages(1);
+                System.out.println((adLists.getEndtime() - System.currentTimeMillis()) + "后停止广告");
+                adhandler.sendEmptyMessageDelayed(1, adLists.getEndtime() - System.currentTimeMillis());
+            } else if (intent.getAction().equals(App.DeleteAdList)) {
+                adhandler.sendEmptyMessage(1);
+            }
+        }
+    };
 
     private LinearLayout live_tips;
     private TextView live_no_s, live_no_name;
@@ -64,21 +226,25 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
         live_player.setOnCompletionListener(this);
         live_player.setOnErrorListener(this);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+
+        ad_left = findViewById(R.id.ad_left);
+        ad_right = findViewById(R.id.ad_right);
+        ad_top = findViewById(R.id.ad_top);
+        ad_bottom = findViewById(R.id.ad_bottom);
     }
+
+    private ImageView ad_left, ad_right, ad_top, ad_bottom;
 
     private AudioManager audioManager;
     private List<Live> livelist = new ArrayList<>();
     private LiveType type;
-    private String url = "";
+    private String tvlist = "";
 
     private void init() {
-
         try {
             type = (LiveType) getIntent().getSerializableExtra("key");
-            url = Req.live + type.getId() + "?mac=" + App.mac;
-            Req.get(url);
-
-
+            tvlist = App.headurl + "live/" + type.getId() + "?mac=" + App.mac + "&STBtype=1";
+            req.Get(tvlist, tvlist);
         } catch (Exception e) {
             // TODO: handle exception
             e.printStackTrace();
@@ -86,23 +252,17 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
 
     }
 
-    public void onEvent(DataMessage event) {
-
-        if (event.getApi().equals(url)) {
-            AJson<List<Live>> data = App.gson.fromJson(
-                    event.getData(), new TypeToken<AJson<List<Live>>>() {
-                    }.getType());
-            livelist = data.getData();
-
-            if (!livelist.isEmpty()) {
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        play();
-                        showinfo();
-                    }
-                });
-            }
+    private void showtip() {
+        try {
+            final BtmDialog dialog = new BtmDialog(PlayerActivity.this, "溫馨提示", "沒有直播頻道，請聯係管理人員");
+            AlertDialogHelper.BtmDialogDerive1(dialog, false, true, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialog.dismiss();
+                }
+            }, null);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -154,7 +314,7 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
             live_list = view.findViewById(R.id.live_list);
             live_list.setAdapter(new LiveListAdapter(this, livelist));
             live_list.setSelectionFromTop(currentno, 220);
-            popupWindow.showAtLocation(view, Gravity.BOTTOM, 0, 0);
+            popupWindow.showAtLocation(getWindow().getDecorView(), Gravity.BOTTOM, 0, 0);
             live_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
                 @Override
@@ -195,6 +355,7 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
                     break;
                 case HideLiveInfo:
                     live_tips.setVisibility(View.GONE);
+                    live_no_b.setVisibility(View.GONE);
                     live_no_b.setText("");
                     break;
                 case SwitchNo:
@@ -231,9 +392,15 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
         if (keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9) {
             cutno += keyCode - 7;
             live_no_b.setText(cutno);
+            if (!live_no_b.isShown()) {
+                live_no_b.setVisibility(View.VISIBLE);
+            }
 
             handler.removeMessages(SwitchNo);
             handler.sendEmptyMessageDelayed(SwitchNo, 2 * 1000);
+
+            handler.removeMessages(HideLiveInfo);
+            handler.sendEmptyMessageDelayed(HideLiveInfo, 5 * 1000);
 
         } else if (keyCode == KeyEvent.KEYCODE_DPAD_CENTER
                 || keyCode == KeyEvent.KEYCODE_ENTER) {
@@ -294,6 +461,7 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
     }
 
     private void showinfo() {
+        System.out.println("1111111111");
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -301,11 +469,13 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
                 live_no_s.setText(liveno(currentno) + "");
                 live_no_name.setText(livelist.get(currentno).getName());
 
+                live_no_b.setVisibility(View.VISIBLE);
                 live_no_b.setText(liveno(currentno) + "");
                 handler.removeMessages(HideLiveInfo);
                 handler.sendEmptyMessageDelayed(HideLiveInfo, 5 * 1000);
             }
         });
+        System.out.println("22222222222");
 
     }
 
@@ -400,12 +570,43 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
     }
 
     private String liveno(int position) {
-        if (position < 10) {
+        if (position < 9) {
             return "00" + (position + 1);
-        } else if (position < 100) {
+        } else if (position < 99) {
             return "0" + (position + 1);
         }
         return (position + 1) + "";
     }
 
+    @Override
+    public void finish(String tag, String json) {
+        if (tag.equals(tvlist)) {
+            AJson<List<Live>> data = App.gson.fromJson(
+                    json, new TypeToken<AJson<List<Live>>>() {
+                    }.getType());
+            livelist = data.getData();
+
+            if (!livelist.isEmpty()) {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        play();
+                        showinfo();
+                    }
+                });
+            } else {
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showtip();
+                    }
+                });
+            }
+        }
+    }
+
+    @Override
+    public void error(String tag, String json) {
+
+    }
 }

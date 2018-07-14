@@ -1,6 +1,9 @@
 获取直播类型
 ------------------------------------
-http://192.168.2.25:8109/ktv/api/live/type?mac=3
+参数：mac   机顶盒mac码
+     STBtype  apk类型  1直播  2ktv
+
+localhost:8080/ktv/api/live/type?mac=3
 
 {
     "code": 0,
@@ -24,8 +27,8 @@ http://192.168.2.25:8109/ktv/api/live/type?mac=3
 
 参数：
      api/live/{type}   直播分类id
-
-http://192.168.2.25:8109/ktv/api/live/2?mac=3
+     STBtype  apk类型  1直播  2ktv
+localhost:8080/ktv/api/live/2?mac=3
 
 {
     "code": 0,
@@ -33,13 +36,81 @@ http://192.168.2.25:8109/ktv/api/live/2?mac=3
         {
             "id": 3,
             "name": "北京电视台",
-            "address": "http://xxxxx.m3u8",   //地址
+            "address": "11111",   //地址
             "status": 1,
             "position": 1,  //序号
             "icon": "http://192.168.2.11:8088/upload/jpg/1523166549378.jpg",
             "typeId": 2,
             "goal": null,
             "type": null
+        }
+    ]
+}
+
+获取升级
+------------------------------------
+参数：
+     version   当前版本
+
+localhost:8080/ktv/api/upgrade/get?mac=4&STBtype=1&version=1
+
+{
+    "code": 0,
+    "data": {
+        "id": 1,
+        "name": "22",
+        "path": "http://192.168.2.11:8088/apk/1529474031439.apk",   //apk路径
+        "beginTime": "2018-06-14 18:02:08",
+        "endTime": "2018-07-14 18:02:08",
+        "version": 22,                                              //版本号
+        "type": 1,
+        "gid": 23,
+        "gName": null
+    }
+}
+
+升级完成
+------------------------------------
+参数：
+     version   升级后版本
+
+localhost:8080/ktv/api/upgrade/set?mac=4&STBtype=1&version=22
+
+{
+    "code": 0
+}
+
+
+
+获取开机广告
+------------------------------------
+localhost:8080/ktv/api/open/ad?mac=4&STBtype=1
+
+
+{
+    "code": 0,
+    "data": [
+        {
+            "id": 3,
+            "name": "三",
+            "aid": 4,
+            "aName": "22",
+            "position": 1,                         //排序号
+            "playTime": 2,                 //播放时间  单位/s
+            "beginTime": "2018-06-19 13:48:51",
+            "endTime": "2018-06-26 13:48:51",
+            "type": 1,
+            "status": true,
+            "ptype": null,
+            "goal": null,
+            "ad": {
+                "id": 4,
+                "name": "22",
+                "type": 1,                                                //资源类型  1.视频 2。图片
+                "path": "http://192.168.2.11:8088/ad/1529048744142.jpg",  //广告文件路径
+                "createtime": "2018-06-15 15:45:47",
+                "backFile": null                             //背景音乐
+            }
         }
     ]
 }

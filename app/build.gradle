@@ -6,8 +6,8 @@ android {
         applicationId "com.live"
         minSdkVersion 19
         targetSdkVersion 27
-        versionCode 1
-        versionName "1.0"
+        versionCode 6
+        versionName "1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -30,4 +30,6 @@ dependencies {
     implementation files('libs/okhttp-3.10.0.jar')
     implementation files('libs/okio-1.14.1.jar')
     implementation files('libs/picasso-2.5.2.jar')
+    implementation files('libs/engine.io-client-1.0.0.jar')
+    implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
 }

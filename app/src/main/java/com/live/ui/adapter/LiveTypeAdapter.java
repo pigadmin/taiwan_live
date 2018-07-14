@@ -64,7 +64,7 @@ public class LiveTypeAdapter extends BaseAdapter {
         }
         holder.livetype_name.setText(addo(position) + list.get(position).getName());
 
-        Picasso.with(context).load(list.get(position).getIcon()).into(holder.livetype_icon);
+        Picasso.with(context).load(list.get(position).getIcon()).error(R.mipmap.desk_icon).into(holder.livetype_icon);
 
         return convertView;
 

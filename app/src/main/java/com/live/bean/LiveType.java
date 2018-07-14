@@ -9,27 +9,38 @@ public class LiveType implements Serializable {
 
     private String name;
 
-    public void setId(int id) {
+    private int position;
+
+    private String ngPath;
+
+    public void setId(int id){
         this.id = id;
     }
-
-    public int getId() {
+    public int getId(){
         return this.id;
     }
-
-    public void setIcon(String icon) {
+    public void setIcon(String icon){
         this.icon = icon;
     }
-
-    public String getIcon() {
+    public String getIcon(){
         return this.icon;
     }
-
-    public void setName(String name) {
+    public void setName(String name){
         this.name = name;
     }
-
-    public String getName() {
+    public String getName(){
         return this.name;
+    }
+    public void setPosition(int position){
+        this.position = position;
+    }
+    public int getPosition(){
+        return this.position;
+    }
+    public void setNgPath(String ngPath){
+        this.ngPath = ngPath;
+    }
+    public String getNgPath(){
+        return this.ngPath;
     }
 }

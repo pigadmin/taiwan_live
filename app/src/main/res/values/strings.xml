@@ -13,4 +13,9 @@
     <string name="bottom_ok">键确定</string>
     <string name="bottom_back">键返回</string>
 
+
+    <string name="ad_tips">按任意鍵跳過</string>
+    <string name="ok">OK</string>
+
+    <string name="update_tips">升級成功</string>
 </resources>
