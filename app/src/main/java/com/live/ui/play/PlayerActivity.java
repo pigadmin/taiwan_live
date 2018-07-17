@@ -461,22 +461,15 @@ public class PlayerActivity extends BaseActivity implements MediaPlayer.OnErrorL
     }
 
     private void showinfo() {
-        System.out.println("1111111111");
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                live_tips.setVisibility(View.VISIBLE);
-                live_no_s.setText(liveno(currentno) + "");
-                live_no_name.setText(livelist.get(currentno).getName());
+        System.out.println(live_tips.isShown());
+        live_tips.setVisibility(View.VISIBLE);
+        live_no_s.setText(liveno(currentno) + "");
+        live_no_name.setText(livelist.get(currentno).getName());
 
-                live_no_b.setVisibility(View.VISIBLE);
-                live_no_b.setText(liveno(currentno) + "");
-                handler.removeMessages(HideLiveInfo);
-                handler.sendEmptyMessageDelayed(HideLiveInfo, 5 * 1000);
-            }
-        });
-        System.out.println("22222222222");
-
+        live_no_b.setVisibility(View.VISIBLE);
+        live_no_b.setText(liveno(currentno) + "");
+        handler.removeMessages(HideLiveInfo);
+        handler.sendEmptyMessageDelayed(HideLiveInfo, 5 * 1000);
     }
 
     private void upchanle() {
